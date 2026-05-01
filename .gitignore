@@ -1,0 +1,7 @@
+# Project exclude paths
+/.gradle/
+/build/
+/build/classes/kotlin/1211Fabric/
+/build/classes/kotlin/1211Neoforge/
+/run/
+/.idea/
