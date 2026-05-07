@@ -1,12 +1,11 @@
 import earth.terrarium.cloche.api.metadata.CommonMetadata
 import earth.terrarium.cloche.api.target.FabricTarget
 import earth.terrarium.cloche.api.target.NeoforgeTarget
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 
 plugins {
     id("earth.terrarium.cloche") version "0.18.11"
 
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.21"
 }
 
 group   = project.property("mod_group").toString()
@@ -40,8 +39,7 @@ cloche {
         description = project.property("mod_description").toString()
         license     = project.property("mod_license").toString()
 
-        val authors = project.property("mod_authors")
-            .toString()
+        val authors = project.property("mod_authors").toString()
             .split(',')
         authors.forEach { author(it) }
     }
@@ -51,31 +49,29 @@ cloche {
 
     // Versions //
 
-    fun FabricTarget.fabricMetadata(versionInt: Int) {
-        val propModGroup = project.property("mod_group").toString()
-        val propModId    = project.property("mod_id").toString()
+    fun FabricTarget.fabricMetadata() {
+        val propModId       = project.property("mod_id").toString()
+        val prefixClassName = project.property("prefix_class_name").toString()
 
         metadata {
-            metadata {
-                dependency {
-                    modId = "fabric-language-kotlin"
-                    version {  }
-                    type = CommonMetadata.Dependency.Type.Required
-                }
-            }
-
             entrypoint("main") {
                 adapter = "kotlin"
-                value   = "$propModGroup.libs.$propModId.UiLayoutFabric"
+                value   = "$group.$propModId.${prefixClassName}Fabric"
             }
             entrypoint("client") {
                 adapter = "kotlin"
-                value   = "$propModGroup.libs.$propModId.client.UiLayoutFabricClient"
+                value   = "$group.$propModId.client.${prefixClassName}FabricClient"
+            }
+
+            dependency {
+                modId = "fabric-language-kotlin"
+                version {  }
+                type = CommonMetadata.Dependency.Type.Required
             }
         }
     }
 
-    fun NeoforgeTarget.neoforgeMetadata(versionInt: Int) {
+    fun NeoforgeTarget.neoforgeMetadata() {
         metadata {
             dependency {
                 modId = "kotlinforforge"
@@ -85,78 +81,35 @@ cloche {
         }
     }
 
-    // Read versions //
-    val fabricVersions   = project.property("fabric_versions").toString().split(',')
-    val neoforgeVersions = project.property("neoforge_versions").toString().split(',')
+    minecraftVersion = project.property("minecraft_version").toString()
 
-    fun getParchmentMcVersion(version: Int): String =
-        when (version) {
-            1_21_11 -> "2025.12.20"
-            1_21_1  -> "2024.11.17"
-            else -> ""
+    fabric {
+        loaderVersion = project.property("fabric_loader_version").toString()
+
+        fabricMetadata()
+
+        runs { client(); server() }
+
+        dependencies {
+            fabricApi(project.property("fabric_api_version").toString())
+
+            val fabricKotlinLanguageVersion = project.property("fabric_kotlin_language_version").toString()
+            implementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinLanguageVersion")
         }
 
-    fabricVersions.forEach { versionStr ->
-        val versionInt = versionStr.replace(".", "").toInt() // ex: "1.21.1" -> 1211 (1_21_1)
-        fabric("$versionStr:fabric") {
-            minecraftVersion = versionStr
-            loaderVersion = "0.19.2"
-
-            fabricMetadata(versionInt)
-            includedClient()
-
-            mappings { parchment(getParchmentMcVersion(versionInt)) }
-
-            dependencies {
-                val fabricApiVersion =
-                    when(versionInt) {
-                        1_21_1  -> "0.116.11"
-                        1_21_11 -> "0.141.3"
-                        else -> ""
-                    }
-                val fabricKotlinLanguageVersion =
-                    when(versionInt) {
-                        //1_21_1, 1_21_11 -> "1.13.9+kotlin.${project.property("kotlin_version").toString()}"
-                        1_21_11 -> "1.13.7+kotlin.2.2.21"
-                        1_21_1  -> "1.13.4+kotlin.${project.property("kotlin_version").toString()}"
-                        else -> ""
-                    }
-
-                fabricApi(fabricApiVersion)
-                implementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinLanguageVersion")
-            }
-
-            runs { client(); server() }
-        }
+        client { }
     }
 
-    neoforgeVersions.forEach { versionStr ->
-        val versionInt = versionStr.replace(".", "").toInt() // ex: "1.21.1" -> 1211 (1_21_1)
-        neoforge("$versionStr:neoforge") {
-            minecraftVersion = versionStr
-            loaderVersion =
-                when(versionInt) {
-                    1_21_1  -> "21.1.26"
-                    1_21_11 -> "21.11.42"
-                    else -> ""
-                }
+    neoforge {
+        loaderVersion = project.property("neoforge_loader_version").toString()
 
-            neoforgeMetadata(versionInt)
+        neoforgeMetadata()
 
-            //mappings { parchment(getParchmentMcVersion(versionInt)) }
+        runs { client(); server() }
 
-            dependencies {
-                val kotlinforforgeVersion =
-                    when(versionInt) {
-                        1_21_1  -> "5.11.0"
-                        1_21_11 -> "6.2.0"
-                        else -> ""
-                    }
-
-                implementation("thedarkcolour:kotlinforforge-neoforge:$kotlinforforgeVersion")
-            }
-
-            runs { client(); server() }
+        dependencies {
+            val kotlinForForgeVersion = project.property("kotlin_for_forge_version").toString()
+            implementation("thedarkcolour:kotlinforforge-neoforge:$kotlinForForgeVersion")
         }
     }
 }

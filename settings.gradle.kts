@@ -15,4 +15,4 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
-rootProject.name = "Ui-Layout-v2"
+rootProject.name = "BOS-Ui-Layout"
