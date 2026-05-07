@@ -2,14 +2,15 @@ package ru.benos.libs.bos_ui_layout.client.nodes
 
 import org.joml.Quaternionf
 import ru.benos.libs.bos_ui_layout.client.UiRuntime
-import ru.benos.libs.bos_ui_layout.client.datas.UiAligns
 import ru.benos.libs.bos_ui_layout.client.datas.UiRect
 import ru.benos.libs.bos_ui_layout.client.datas.UiSize
 import ru.benos.libs.bos_ui_layout.client.datas.UiTransform
 import kotlin.math.max
 
 abstract class AbstractChildrenUiNode: AbstractUiNode() {
-    protected val children: List<IUiNode> = emptyList()
+    abstract val enableScissor: Boolean
+
+    abstract val children: List<IUiNode>
 
     override fun measure(runtime: UiRuntime, availableSize: UiSize): UiSize {
         val inner = UiRect(0, 0, availableSize)
@@ -34,9 +35,42 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
     override fun render(runtime: UiRuntime, bounds: UiRect) {
         super.render(runtime, bounds)
 
-        val hasTransfrom = modifier.transform != UiTransform.DEFAULT
-        if (hasTransfrom) {
+        transformative(runtime, bounds) {
+            val inner = bounds.shrink(modifier.padding)
+            scissor(runtime, inner) { renderChildren(runtime, inner) }
+        }
+    }
+
+    protected fun renderChildren(runtime: UiRuntime, bounds: UiRect) {
+        children.forEach { child ->
+            val measured = child.measure(runtime, bounds.size)
+
+            val childSize = UiSize(
+                modifier.stretchSize.width.calcLength(bounds.width, runtime.currentAvailableWidth, measured.width),
+                modifier.stretchSize.height.calcLength(bounds.height, runtime.currentAvailableHeight, measured.height)
+            )
+            val (hAlignOffset, vAlignOffset) = modifier.aligns.calcAligns(bounds.size, childSize)
+
+            val childBounds = UiRect(bounds.x + hAlignOffset, bounds.y + vAlignOffset, childSize)
+            child.render(runtime, childBounds)
+        }
+    }
+
+    protected fun scissor(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
+        if (enableScissor)
+            runtime.guiGraphics.enableScissor(bounds.x, bounds.y, bounds.right, bounds.bottom)
+
+        block()
+
+        if (enableScissor)
+            runtime.guiGraphics.disableScissor()
+    }
+
+    protected fun transformative(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
+        val hasTransform = modifier.transform != UiTransform.DEFAULT
+        if (hasTransform) {
             val pose = runtime.guiGraphics.pose()
+            pose.pushPose()
 
             val pivotX = bounds.x + bounds.width  * modifier.transform.origin.x
             val pivotY = bounds.y + bounds.height * modifier.transform.origin.y
@@ -66,25 +100,9 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
             pose.translate(-pivotX, -pivotY, 0f)
         }
 
-        val inner = bounds.shrink(modifier.padding)
-        renderChildren(runtime, inner)
+        block()
 
-        if (hasTransfrom)
+        if (hasTransform)
             runtime.guiGraphics.pose().popPose()
-    }
-
-    protected fun renderChildren(runtime: UiRuntime, bounds: UiRect) {
-        children.forEach { child ->
-            val measured = child.measure(runtime, bounds.size)
-
-            val childSize = UiSize(
-                modifier.stretchSize.width.calcLength(bounds.width, runtime.currentAvailableWidth, measured.width),
-                modifier.stretchSize.height.calcLength(bounds.height, runtime.currentAvailableHeight, measured.height)
-            )
-            val (hAlignOffset, vAlignOffset) = modifier.aligns.calcAligns(bounds.size, childSize)
-
-            val childBounds = UiRect(bounds.x + hAlignOffset, bounds.y + vAlignOffset, childSize)
-            child.render(runtime, childBounds)
-        }
     }
 }

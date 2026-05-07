@@ -8,6 +8,9 @@ data class UiRect(
             this(x, y, size.width, size.height)
 
     companion object {
+        val X16: UiRect
+            get() = UiRect(0, 0, 16, 16)
+
         fun stretch(width: Int, height: Int): UiRect =
             UiRect(0, 0, width, height)
 
