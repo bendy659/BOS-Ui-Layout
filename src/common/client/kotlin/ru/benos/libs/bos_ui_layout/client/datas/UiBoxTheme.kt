@@ -31,6 +31,22 @@ data class UiBoxTheme(
                     UiCanvas.outline(255, 64, 64, width = 2)
                 )
             )
+
+        val DEFAULT: UiBoxTheme
+            get() = UiBoxTheme(
+                layersNormal = setOf(
+                    UiCanvas.fill(32, 32, 32),
+                    UiCanvas.outline(255, 255, 255, 16, width = 2)
+                ),
+                layersHovered = setOf(
+                    UiCanvas.fill(48, 48, 48),
+                    UiCanvas.outline(255, 255, 255, 24, width = 2)
+                ),
+                layersClicked = setOf(
+                    UiCanvas.fill(64, 64, 64),
+                    UiCanvas.outline(255, 255, 255, 32, width = 2)
+                )
+            )
     }
 
     fun normal(vararg layer: IUiCanvas): UiBoxTheme {

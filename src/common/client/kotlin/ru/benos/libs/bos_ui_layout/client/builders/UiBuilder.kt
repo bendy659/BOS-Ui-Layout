@@ -3,7 +3,9 @@ package ru.benos.libs.bos_ui_layout.client.builders
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.benos.libs.bos_ui_layout.client.UiDsl
+import ru.benos.libs.bos_ui_layout.client.api.UiCanvas
 import ru.benos.libs.bos_ui_layout.client.datas.UiBoxTheme
+import ru.benos.libs.bos_ui_layout.client.datas.UiColor
 import ru.benos.libs.bos_ui_layout.client.datas.UiModifier
 import ru.benos.libs.bos_ui_layout.client.datas.UiRect
 import ru.benos.libs.bos_ui_layout.client.enum.UiTextAlign
@@ -32,7 +34,7 @@ class UiBuilder {
         boxTheme: UiBoxTheme = UiBoxTheme.TRANSPARENT,
         enableScissor: Boolean = false,
         modifier: UiModifier = UiModifier,
-        block: UiBuilder.() -> Unit
+        block: UiBuilder.() -> Unit = { }
     ) {
         val children = UiBuilder().apply(block).build()
         val node = UiBoxNode(boxTheme, enableScissor, children, modifier)
@@ -51,5 +53,29 @@ class UiBuilder {
         val node = UiLabelNode(component, textAlign, wrap, maxLines, enableLabelShadow, modifier)
 
         this.children += node
+    }
+
+    fun button(
+        boxTheme: UiBoxTheme = UiBoxTheme.DEFAULT,
+        modifier: UiModifier = UiModifier,
+        onClick: (Int, Int, Int) -> Boolean,
+        block: UiBuilder.() -> Unit = { }
+    ) {
+        val buttonModifier = modifier
+            .mouseEvents { onReleased(onClick) }
+
+        box(boxTheme, false, buttonModifier, block)
+    }
+
+    fun image(
+        color: UiColor,
+        resource: String,
+        modifier: UiModifier = UiModifier,
+        block: UiBuilder.() -> Unit = { }
+    ) {
+        val layer = setOf(UiCanvas.texture(color, resource))
+        val boxTheme = UiBoxTheme(layer)
+
+        box(boxTheme, false, modifier, block)
     }
 }
