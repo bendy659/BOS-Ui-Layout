@@ -10,6 +10,9 @@ data class UiRect(
     companion object {
         fun stretch(width: Int, height: Int): UiRect =
             UiRect(0, 0, width, height)
+
+        fun stretch(size: UiSize): UiRect =
+            stretch(size.width, size.height)
     }
 
     val right: Int
@@ -17,6 +20,9 @@ data class UiRect(
 
     val bottom: Int
         get() = y + height
+
+    val size: UiSize
+        get() = UiSize(width, height)
 
     fun shrink(insents: UiInsets): UiRect =
         UiRect(

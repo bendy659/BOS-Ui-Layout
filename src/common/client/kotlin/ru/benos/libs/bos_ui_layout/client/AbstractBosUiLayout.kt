@@ -62,7 +62,7 @@ abstract class AbstractBosUiLayout: Screen(Component.empty()), IBosUiLayout {
         currentRuntime.deltaTime =
             when (lastFrameTime == null) {
                 true  -> 0.0f
-                false -> ((now - lastFrameTime) / 10_000_000_000).toFloat()
+                false -> ((now - lastFrameTime) / 1_000_000_000).toFloat()
             }
         currentRuntime.totalTime += currentRuntime.deltaTime
         currentRuntime.lastFrameTimeNanos = now
