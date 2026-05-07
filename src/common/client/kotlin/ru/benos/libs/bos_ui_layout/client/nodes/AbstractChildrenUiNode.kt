@@ -36,7 +36,7 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
         }
     }
 
-    protected fun renderChildren(runtime: UiRuntime, bounds: UiRect) {
+    protected open fun renderChildren(runtime: UiRuntime, bounds: UiRect) {
         children.forEach { child ->
             val measured = child.measure(runtime, bounds.size)
 
@@ -51,7 +51,7 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
         }
     }
 
-    protected fun scissor(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
+    protected open fun scissor(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
         if (enableScissor)
             runtime.guiGraphics.enableScissor(bounds.x, bounds.y, bounds.right, bounds.bottom)
 
@@ -61,7 +61,7 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
             runtime.guiGraphics.disableScissor()
     }
 
-    protected fun transformative(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
+    protected open fun transformative(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
         val hasTransform = modifier.transform != UiTransform.DEFAULT
         if (hasTransform) {
             val pose = runtime.guiGraphics.pose()

@@ -8,11 +8,13 @@ import ru.benos.libs.bos_ui_layout.client.datas.UiBoxTheme
 import ru.benos.libs.bos_ui_layout.client.datas.UiColor
 import ru.benos.libs.bos_ui_layout.client.datas.UiModifier
 import ru.benos.libs.bos_ui_layout.client.datas.UiRect
+import ru.benos.libs.bos_ui_layout.client.enum.UiAxis
 import ru.benos.libs.bos_ui_layout.client.enum.UiTextAlign
 import ru.benos.libs.bos_ui_layout.client.nodes.IUiNode
 import ru.benos.libs.bos_ui_layout.client.nodes.UiBoxNode
 import ru.benos.libs.bos_ui_layout.client.nodes.UiLabelNode
 import ru.benos.libs.bos_ui_layout.client.nodes.UiRenderNode
+import ru.benos.libs.bos_ui_layout.client.nodes.grid.UiLinearLayoutNode
 
 @UiDsl
 class UiBuilder {
@@ -78,4 +80,30 @@ class UiBuilder {
 
         box(boxTheme, false, modifier, block)
     }
+
+    private fun linearLayout(
+        axis: UiAxis,
+        gap: Int,
+        modifier: UiModifier = UiModifier,
+        block: UiBuilder.() -> Unit = { }
+    ) {
+        val children = UiBuilder().apply(block).build()
+        val node = UiLinearLayoutNode(axis, gap, false, children, modifier)
+
+        this.children += node
+    }
+
+    fun row(
+        gap: Int = 0,
+        modifier: UiModifier = UiModifier,
+        block: UiBuilder.() -> Unit = { }
+    ) =
+        linearLayout(UiAxis.Horizontal, gap, modifier, block)
+
+    fun column(
+        gap: Int = 0,
+        modifier: UiModifier = UiModifier,
+        block: UiBuilder.() -> Unit = { }
+    ) =
+        linearLayout(UiAxis.Vertical, gap, modifier, block)
 }
