@@ -124,4 +124,23 @@ open class UiModifier(
         val currentAvailable = UiRuntime.currentRuntime?.currentAvailableHeight
         return stretchSize.height.resolve(minSize.height.result, padding.vertical, currentAvailable, contentHeight, availableHeight)
     }
+
+    fun resolveSize(
+        contentWidth: Int,
+        contentHeight: Int,
+        availableSize: UiSize
+    ): UiSize {
+        val resolvedWidth = resolveWidth(contentWidth + padding.horizontal, availableSize.width)
+        val resolvedHeight = resolveHeight(contentHeight + padding.vertical, availableSize.height)
+
+        val minW = minSize.width.result
+        val maxW = maxOf(minW, maxSize?.width?.result ?: availableSize.width)
+        val minH = minSize.height.result
+        val maxH = maxOf(minH, maxSize?.height?.result ?: availableSize.height)
+
+        return UiSize(
+            resolvedWidth.coerceIn(minW, maxW),
+            resolvedHeight.coerceIn(minH, maxH)
+        )
+    }
 }

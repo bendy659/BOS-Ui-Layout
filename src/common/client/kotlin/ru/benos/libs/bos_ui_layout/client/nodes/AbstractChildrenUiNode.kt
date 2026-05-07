@@ -13,23 +13,18 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
     abstract val children: List<IUiNode>
 
     override fun measure(runtime: UiRuntime, availableSize: UiSize): UiSize {
-        val inner = UiRect(0, 0, availableSize)
-            .shrink(modifier.padding)
+        val inner = UiRect(0, 0, availableSize).shrink(modifier.padding)
 
         var contentWidth = 0
         var contentHeight = 0
 
         children.forEach { child ->
             val measured = child.measure(runtime, UiSize(inner.width, inner.height))
-
             contentWidth  = max(contentWidth, measured.width)
             contentHeight = max(contentHeight, measured.height)
         }
 
-        return UiSize(
-            modifier.resolveWidth(contentWidth, availableSize.width),
-            modifier.resolveHeight(contentHeight, availableSize.height)
-        )
+        return modifier.resolveSize(contentWidth, contentHeight, availableSize)
     }
 
     override fun render(runtime: UiRuntime, bounds: UiRect) {
