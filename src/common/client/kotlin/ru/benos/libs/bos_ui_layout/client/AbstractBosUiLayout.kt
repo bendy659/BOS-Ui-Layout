@@ -13,31 +13,60 @@ abstract class AbstractBosUiLayout: Screen(Component.empty()), IBosUiLayout {
 
     override var runtime: UiRuntime? = null
 
+    private var isDirty: Boolean = true
+    private var cachedUiTree: IUiNode? = null
+
     abstract override fun UiBuilder.ui()
 
     protected fun buildUi(): IUiNode = TODO()
+
+    protected fun rebuildUi() {
+        if (true || isDirty) {
+            cachedUiTree = buildUi()
+            isDirty = false
+        }
+    }
+
+    open fun refresh() { isDirty = true }
 
     // Overrides //
 
     override fun render(p0: GuiGraphics, p1: Int, p2: Int, p3: Float) {
         val frameRuntime = newRuntime(p0, p1, p2)
 
-        buildUi().render(frameRuntime, contentBounds)
+        this.rebuildUi()
+        cachedUiTree?.render(frameRuntime, contentBounds)
     }
 
     override fun mouseClicked(p0: Double, p1: Double, p2: Int): Boolean {
+        val mouseClicked = runtime?.mouseClicked(p2, p0, p1)
+        if (mouseClicked == true)
+            return true
+
         return super.mouseClicked(p0, p1, p2)
     }
 
     override fun mouseReleased(p0: Double, p1: Double, p2: Int): Boolean {
+        val mouseReleased = runtime?.mouseReleased(p2, p0, p1)
+        if (mouseReleased == true)
+            return true
+
         return super.mouseReleased(p0, p1, p2)
     }
 
     override fun mouseDragged(p0: Double, p1: Double, p2: Int, p3: Double, p4: Double): Boolean {
+        val mouseDragged = runtime?.mouseDragged(p0, p1, p2, p3, p4)
+        if (mouseDragged == true)
+            return true
+
         return super.mouseDragged(p0, p1, p2, p3, p4)
     }
 
     override fun mouseScrolled(p0: Double, p1: Double, p2: Double, p3: Double): Boolean {
+        val mouseScrolled = runtime?.mouseScrolled(p0, p1, p2, p3)
+        if (mouseScrolled == true)
+            return true
+
         return super.mouseScrolled(p0, p1, p2, p3)
     }
 

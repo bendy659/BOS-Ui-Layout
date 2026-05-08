@@ -19,8 +19,8 @@ data class UiMouseEvents(
         var onClicked : ((Int, Int, Int) -> Boolean)? = null
         var onReleased: ((Int, Int, Int) -> Boolean)? = null
 
-        var onDragged : ((Int, Double, Double) -> Boolean)? = null
-        var onScrolled: ((delta: Double)       -> Boolean)? = null
+        var onDragged : ((Int, Double, Double)     -> Boolean)? = null
+        var onScrolled: ((Boolean, Double, Double) -> Boolean)? = null
 
         fun build(): UiMouseEvents =
             UiMouseEvents(
@@ -49,7 +49,7 @@ data class UiMouseEvents(
         fun onDragged(block: (Int, Double, Double) -> Boolean) {
             this.onDragged = block
         }
-        fun onScrolled(block: (Double) -> Boolean) {
+        fun onScrolled(block: (Boolean, Double, Double) -> Boolean) {
             this.onScrolled = block
         }
     }

@@ -23,7 +23,7 @@ abstract class AbstractUiNode: IUiNode {
                 .normalizeMouse(runtime.mouse, bounds)
 
             val isHovered = runtime.trackHover(bounds, localX.toInt(), localY.toInt())
-            val wasHovered = runtime.isHovered(bounds)
+            val wasHovered = runtime.isMouseHovered(bounds)
 
             if (isHovered && !wasHovered)
                 modifier.mouseEvents.onEntered?.invoke()

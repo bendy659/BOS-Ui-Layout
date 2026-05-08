@@ -27,9 +27,9 @@ open class UiBoxNode(
     protected fun renderBackground(runtime: UiRuntime, bounds: UiRect) {
         val backgroundColor =
             when {
-                runtime.isClicked(bounds)  -> boxTheme.layersClicked
-                runtime.isHovered(bounds)  -> boxTheme.layersHovered
-                runtime.isReleased(bounds) -> boxTheme.layersReleased
+                runtime.isMouseClicked(bounds)  -> boxTheme.layersClicked
+                runtime.isMouseHovered(bounds)  -> boxTheme.layersHovered
+                runtime.isMouseReleased(bounds) -> boxTheme.layersReleased
                 //isFocused       -> boxTheme.backgroundFocused
 
                 else -> boxTheme.layersNormal

@@ -24,8 +24,10 @@ class UiRuntime(
 
     private val availableSpaceStack: MutableList<UiSize> = mutableListOf()
 
-    private val mouseClickRegions: MutableList<UiEventRegions3<Int, Int, Int, Boolean>> = mutableListOf()
+    private val mouseClickRegions  : MutableList<UiEventRegions3<Int, Int, Int, Boolean>> = mutableListOf()
     private val mouseReleaseRegions: MutableList<UiEventRegions3<Int, Int, Int, Boolean>> = mutableListOf()
+    private val mouseScrollRegions : MutableList<UiEventRegions3<Boolean, Double, Double, Boolean>> = mutableListOf()
+    private val mouseDragRegions   : MutableList<UiEventRegions3<Int, Double, Double, Boolean>> = mutableListOf()
 
     private val mouseClickedRects : MutableSet<UiRect> = mutableSetOf()
     private val mouseHoveredRects    : MutableSet<UiRect> = mutableSetOf()
@@ -69,6 +71,12 @@ class UiRuntime(
     fun addMouseReleaseRegion(rect: UiRect, transform: UiTransform, event: (Int, Int, Int) -> Boolean) =
         mouseReleaseRegions.add(UiEventRegions3(rect, transform, event))
 
+    fun addScrollRegion(rect: UiRect, transform: UiTransform, event: (Boolean, Double, Double) -> Boolean) =
+        mouseScrollRegions.add(UiEventRegions3(rect, transform, event))
+
+    fun addDragRegion(rect: UiRect, transform: UiTransform, event: (Int, Double, Double) -> Boolean) =
+        mouseDragRegions.add(UiEventRegions3(rect, transform, event))
+
     //// Action utils ////
 
     private fun click(key: Int, mouseX: Int, mouseY: Int, regions: List<UiEventRegions3<Int, Int, Int, Boolean>>, rects: MutableSet<UiRect>): Boolean {
@@ -85,23 +93,55 @@ class UiRuntime(
         return false
     }
 
-    fun clicked(key: Int, mouseX: Int, mouseY: Int): Boolean =
-        click(key, mouseX, mouseY, mouseClickRegions, mouseClickedRects)
+    fun mouseClicked(key: Int, mouseX: Number, mouseY: Number): Boolean =
+        click(key, mouseX.toInt(), mouseY.toInt(), mouseClickRegions, mouseClickedRects)
 
-    fun released(key: Int, mouseX: Int, mouseY: Int): Boolean {
+    fun mouseReleased(key: Int, mouseX: Number, mouseY: Number): Boolean {
         mouseClickedRects.clear()
-        return click(key, mouseX, mouseY, mouseReleaseRegions, mouseReleasedRectsNext)
+        return click(key, mouseX.toInt(), mouseY.toInt(), mouseReleaseRegions, mouseReleasedRectsNext)
     }
 
-    fun isClicked(rect: UiRect): Boolean =
+    fun mouseScrolled(mouseX: Number, mouseY: Number, scrollX: Double, scrollY: Double): Boolean {
+        for (region in mouseScrollRegions.reversed()) {
+            val (localX, localY) = region.transform.normalizeMouse(Vector2i(mouseX.toInt(), mouseY.toInt()), region.rect)
+            if (!region.rect.contains(localX.toDouble(), localY.toDouble()))
+                continue
+
+            if (region.event(true, scrollX, scrollY)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun mouseDragged(mouseX: Number, mouseY: Number, button: Int, dragX: Double, dragY: Double): Boolean {
+        for (region in mouseDragRegions.reversed()) {
+            val (localX, localY) = region.transform.normalizeMouse(Vector2i(mouseX.toInt(), mouseY.toInt()), region.rect)
+            if (!region.rect.contains(localX.toDouble(), localY.toDouble()))
+                continue
+
+            if (region.event(button, dragX, dragY)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun isMouseClicked(rect: UiRect): Boolean =
         mouseClickedRects.contains(rect)
 
-    fun isHovered(rect: UiRect): Boolean =
+    fun isMouseHovered(rect: UiRect): Boolean =
         mouseClickRegions.any { it.rect == rect } ||
                 mouseReleaseRegions.any { it.rect == rect }
 
-    fun isReleased(rect: UiRect): Boolean =
+    fun isMouseReleased(rect: UiRect): Boolean =
         mouseReleasedRects.contains(rect)
+
+    fun isMouseScrolled(rect: UiRect): Boolean =
+        mouseReleaseRegions.any { it.rect == rect }
+
+    fun isMouseDragged(rect: UiRect): Boolean =
+        mouseDragRegions.any { it.rect == rect }
 
     fun trackHover(rect: UiRect, localX: Int, localY: Int): Boolean {
         val hovered = rect.contains(localX, localY)
