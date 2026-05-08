@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.benos.libs.bos_ui_layout.client.UiDsl
 import ru.benos.libs.bos_ui_layout.client.api.UiCanvas
+import ru.benos.libs.bos_ui_layout.client.datas.UIScrollState
 import ru.benos.libs.bos_ui_layout.client.datas.UiBoxTheme
 import ru.benos.libs.bos_ui_layout.client.datas.UiColor
 import ru.benos.libs.bos_ui_layout.client.datas.UiModifier
@@ -14,6 +15,7 @@ import ru.benos.libs.bos_ui_layout.client.nodes.IUiNode
 import ru.benos.libs.bos_ui_layout.client.nodes.UiBoxNode
 import ru.benos.libs.bos_ui_layout.client.nodes.UiLabelNode
 import ru.benos.libs.bos_ui_layout.client.nodes.UiRenderNode
+import ru.benos.libs.bos_ui_layout.client.nodes.grid.UiGridNode
 import ru.benos.libs.bos_ui_layout.client.nodes.grid.UiLinearLayoutNode
 
 @UiDsl
@@ -81,18 +83,6 @@ class UiBuilder {
         box(boxTheme, false, modifier, block)
     }
 
-    private fun linearLayout(
-        axis: UiAxis,
-        gap: Int,
-        modifier: UiModifier = UiModifier,
-        block: UiBuilder.() -> Unit = { }
-    ) {
-        val children = UiBuilder().apply(block).build()
-        val node = UiLinearLayoutNode(axis, gap, false, children, modifier)
-
-        this.children += node
-    }
-
     fun row(
         gap: Int = 0,
         modifier: UiModifier = UiModifier,
@@ -106,4 +96,36 @@ class UiBuilder {
         block: UiBuilder.() -> Unit = { }
     ) =
         linearLayout(UiAxis.Vertical, gap, modifier, block)
+
+    fun grid(
+        rows: Int,
+        columns: Int,
+        hGap: Int = 0,
+        vGap: Int = 0,
+        modifier: UiModifier = UiModifier,
+        block: UiGridBuilder.() -> Unit = { }
+    ) {
+        val children = UiGridBuilder().apply(block).build()
+        val node = UiGridNode(rows, columns, hGap, vGap, children, modifier)
+
+        this.children += node
+    }
+
+    //// Private ////
+
+    private fun linearLayout(
+        axis: UiAxis,
+        gap: Int,
+        modifier: UiModifier = UiModifier,
+        block: UiBuilder.() -> Unit = { }
+    ) {
+        val children = UiBuilder().apply(block).build()
+        val node = UiLinearLayoutNode(axis, gap, false, children, modifier)
+
+        this.children += node
+    }
+
+    private fun scrollbar(state: UIScrollState, axis: UiAxis, barTheme: UiBoxTheme, backgroundBarTheme: UiBoxTheme) {
+
+    }
 }

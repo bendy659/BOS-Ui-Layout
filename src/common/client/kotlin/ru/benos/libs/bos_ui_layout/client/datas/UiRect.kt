@@ -7,6 +7,9 @@ data class UiRect(
     constructor(x: Int, y: Int, size: UiSize):
             this(x, y, size.width, size.height)
 
+    constructor(rect: UiRect, size: UiSize):
+            this(rect.x, rect.y, size.width, size.height)
+
     companion object {
         val X16: UiRect
             get() = UiRect(0, 0, 16, 16)

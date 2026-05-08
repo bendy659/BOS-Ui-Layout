@@ -5,6 +5,8 @@ import ru.benos.libs.bos_ui_layout.client.datas.UiRect
 import ru.benos.libs.bos_ui_layout.client.datas.UiSize
 
 abstract class AbstractUiNode: IUiNode {
+    protected open val enableScissor: Boolean = false
+
     override fun measure(runtime: UiRuntime, availableSize: UiSize): UiSize =
         availableSize
 
@@ -32,5 +34,15 @@ abstract class AbstractUiNode: IUiNode {
             if (isHovered)
                 modifier.mouseEvents.onHovered?.invoke(localX.toInt(), localY.toInt())
         }
+    }
+
+    protected open fun scissor(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
+        if (enableScissor)
+            runtime.guiGraphics.enableScissor(bounds.x, bounds.y, bounds.right, bounds.bottom)
+
+        block()
+
+        if (enableScissor)
+            runtime.guiGraphics.disableScissor()
     }
 }

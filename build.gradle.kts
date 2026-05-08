@@ -127,3 +127,17 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
+
+tasks.named("kotlinSourcesJar") {
+    this as org.gradle.jvm.tasks.Jar
+
+    from("src/common/main/kotlin")
+    from("src/common/client/kotlin")
+    from("src/fabric/main/kotlin")
+    from("src/fabric/client/kotlin")
+    from("src/neoforge/main/kotlin")
+}
+
+tasks.named("build") {
+    dependsOn("kotlinSourcesJar")
+}

@@ -35,6 +35,8 @@ class UiRuntime(
     private val mouseReleasedRects: MutableSet<UiRect> = mutableSetOf()
     private val mouseReleasedRectsNext: MutableSet<UiRect> = mutableSetOf()
 
+    private var activeDragRect: UiRect? = null
+
     var deltaTime: Float = 0.0f
     var totalTime: Float = 0.0f
     var lastFrameTimeNanos: Long? = null
@@ -93,11 +95,28 @@ class UiRuntime(
         return false
     }
 
-    fun mouseClicked(key: Int, mouseX: Number, mouseY: Number): Boolean =
-        click(key, mouseX.toInt(), mouseY.toInt(), mouseClickRegions, mouseClickedRects)
+    fun mouseClicked(key: Int, mouseX: Number, mouseY: Number): Boolean {
+        val click = click(key, mouseX.toInt(), mouseY.toInt(), mouseClickRegions, mouseClickedRects)
+
+        mouseDragRegions.reversed()
+            .forEach { region ->
+                val (localX, localY) = region.transform.normalizeMouse(
+                    Vector2i(mouseX.toInt(), mouseY.toInt()),
+                    region.rect
+                )
+
+                if (region.rect.contains(localX, localY)) {
+                    activeDragRect = region.rect
+                    return@forEach
+                }
+            }
+
+        return click
+    }
 
     fun mouseReleased(key: Int, mouseX: Number, mouseY: Number): Boolean {
-        mouseClickedRects.clear()
+        activeDragRect = null
+
         return click(key, mouseX.toInt(), mouseY.toInt(), mouseReleaseRegions, mouseReleasedRectsNext)
     }
 
@@ -114,17 +133,11 @@ class UiRuntime(
         return false
     }
 
-    fun mouseDragged(mouseX: Number, mouseY: Number, button: Int, dragX: Double, dragY: Double): Boolean {
-        for (region in mouseDragRegions.reversed()) {
-            val (localX, localY) = region.transform.normalizeMouse(Vector2i(mouseX.toInt(), mouseY.toInt()), region.rect)
-            if (!region.rect.contains(localX.toDouble(), localY.toDouble()))
-                continue
+    fun mouseDragged(button: Int, dragX: Double, dragY: Double): Boolean {
+        val active = activeDragRect ?: return false
 
-            if (region.event(button, dragX, dragY)) {
-                return true
-            }
-        }
-        return false
+        val region = mouseDragRegions.lastOrNull { it.rect == active } ?: return false
+        return region.event(button, dragX, dragY)
     }
 
     fun isMouseClicked(rect: UiRect): Boolean =

@@ -21,7 +21,7 @@ abstract class AbstractBosUiLayout: Screen(Component.empty()), IBosUiLayout {
     protected fun buildUi(): IUiNode = TODO()
 
     protected fun rebuildUi() {
-        if (true || isDirty) {
+        if (isDirty) {
             cachedUiTree = buildUi()
             isDirty = false
         }
@@ -32,7 +32,9 @@ abstract class AbstractBosUiLayout: Screen(Component.empty()), IBosUiLayout {
     // Overrides //
 
     override fun render(p0: GuiGraphics, p1: Int, p2: Int, p3: Float) {
+        refresh()
         val frameRuntime = newRuntime(p0, p1, p2)
+
 
         this.rebuildUi()
         cachedUiTree?.render(frameRuntime, contentBounds)
@@ -55,7 +57,7 @@ abstract class AbstractBosUiLayout: Screen(Component.empty()), IBosUiLayout {
     }
 
     override fun mouseDragged(p0: Double, p1: Double, p2: Int, p3: Double, p4: Double): Boolean {
-        val mouseDragged = runtime?.mouseDragged(p0, p1, p2, p3, p4)
+        val mouseDragged = runtime?.mouseDragged(p2, p3, p4)
         if (mouseDragged == true)
             return true
 

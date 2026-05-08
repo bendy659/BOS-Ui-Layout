@@ -51,16 +51,6 @@ abstract class AbstractChildrenUiNode: AbstractUiNode() {
         }
     }
 
-    protected open fun scissor(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
-        if (enableScissor)
-            runtime.guiGraphics.enableScissor(bounds.x, bounds.y, bounds.right, bounds.bottom)
-
-        block()
-
-        if (enableScissor)
-            runtime.guiGraphics.disableScissor()
-    }
-
     protected open fun transformative(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {
         val hasTransform = modifier.transform != UiTransform.DEFAULT
         if (hasTransform) {
