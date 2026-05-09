@@ -1,18 +1,22 @@
 pluginManagement {
     repositories {
-        maven("https://maven.msrandom.net/repository/cloche/")
-
-        mavenCentral()
-        mavenLocal()
+        maven {
+            url = uri("https://maven.fabricmc.net/")
+        }
+        maven {
+            url = uri("https://maven.architectury.dev/")
+        }
+        maven {
+            url = uri("https://files.minecraftforge.net/maven/")
+        }
         gradlePluginPortal()
-
-        maven("https://maven.fabricmc.net/")
-        maven("https://maven.neoforged.net/releases")
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-}
+rootProject.name = "bos_ui_layout"
 
-rootProject.name = "BOS-Ui-Layout"
+include(":common", ":fabric", ":neoforge")
+
+project(":common").projectDir   = file("code/common")
+project(":fabric").projectDir   = file("code/fabric")
+project(":neoforge").projectDir = file("code/neoforge")

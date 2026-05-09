@@ -1,7 +1,25 @@
-# Project exclude paths
-/.gradle/
-/build/
-/build/classes/kotlin/1211Fabric/
-/build/classes/kotlin/1211Neoforge/
-/run/
-/.idea/
+# Gradle
+.gradle/
+build/
+code/*/.gradle/
+code/*/build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Loom cache
+code/*/loom-cache/
+code/*/remapped_mods/
+
+# Run configs (генерятся автоматически)
+run/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db

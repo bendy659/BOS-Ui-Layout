@@ -1,0 +1,30 @@
+{
+    "schemaVersion": 1,
+
+    "id"         : "bos_ui_layout",
+    "version"    : "${version}",
+    "name"       : "BOS: Ui-Layout",
+    "description": "This is an example description! Tell everyone what your mod is about!",
+    "authors"    : [ "Me!" ],
+    "contact"    : { },
+    "license"    : "All Rights Reserved",
+    "icon"       : "assets/bos_ui_layout/icon.png",
+
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            { "adapter": "kotlin", "value": "ru.benos.bos_ui_layout.client.BosUiLayoutClient" }
+        ]
+    },
+    "mixins"    : [ "bos_ui_layout.mixins.json" ],
+
+    "depends": {
+        "fabricloader"          : ">=0.19.2",
+        "minecraft"             : "~1.21.1",
+        "java"                  : ">=21",
+        "architectury"          : ">=13.0.8",
+        "fabric-api"            : "*",
+        "fabric-language-kotlin": "*"
+    },
+    "suggests": { "another-mod": "*" }
+}

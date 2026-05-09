@@ -1,0 +1,21 @@
+loom {
+    silentMojangMappingsLicense()
+}
+
+architectury {
+    common(rootProject.property("enabled_platforms").toString().split(','))
+}
+
+dependencies {
+    minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
+    mappings(loom.officialMojangMappings())
+
+    // We depend on Fabric Loader here to use the Fabric @Environment annotations,
+    // which get remapped to the correct annotations on each platform.
+    // Do NOT use other classes from Fabric Loader.
+    modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
+
+    // Architectury API. This is optional, and you can comment it out if you don't need it.
+    modImplementation("dev.architectury:architectury:${rootProject.property("architectury_api_version")}")
+}
+
