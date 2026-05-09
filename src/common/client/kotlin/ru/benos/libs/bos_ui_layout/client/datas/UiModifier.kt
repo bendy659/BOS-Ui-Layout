@@ -93,9 +93,9 @@ open class UiModifier(
     fun vAlign(vertical: UiAlign): UiModifier =
         this.aligns(v = vertical)
 
-    fun transform(block: UiTransform.Builder.() -> Unit) {
+    fun transform(block: UiTransform.Builder.() -> Unit): UiModifier {
         val newTransform = UiTransform.Builder().apply(block).build()
-        this.copy(transform = newTransform)
+        return this.copy(transform = newTransform)
     }
 
     fun mouseEvents(block: UiMouseEvents.Builder.() -> Unit): UiModifier {

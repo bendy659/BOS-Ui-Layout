@@ -45,6 +45,7 @@ cloche {
     }
 
     // Mappings //
+
     mappings { official() }
 
     // Versions //
@@ -91,9 +92,11 @@ cloche {
         runs { client(); server() }
 
         dependencies {
-            fabricApi(project.property("fabric_api_version").toString())
-
+            val fabricApiVersion = project.property("fabric_api_version").toString()
             val fabricKotlinLanguageVersion = project.property("fabric_kotlin_language_version").toString()
+
+            fabricApi(fabricApiVersion)
+
             implementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinLanguageVersion")
         }
 

@@ -8,8 +8,6 @@ import ru.benos.libs.bos_ui_layout.client.datas.UiTransform
 import kotlin.math.max
 
 abstract class AbstractChildrenUiNode: AbstractUiNode() {
-    abstract val enableScissor: Boolean
-
     abstract val children: List<IUiNode>
 
     override fun measure(runtime: UiRuntime, availableSize: UiSize): UiSize {
