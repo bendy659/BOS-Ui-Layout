@@ -7,7 +7,7 @@ import ru.benos.libs.bos_ui_layout.datas.UiModifier
 import ru.benos.libs.bos_ui_layout.nodes.UiBoxNode
 
 @UiDsl
-class UiGridBuilder {
+open class UiGridBuilder {
     private val children: MutableList<UiGridChild> = mutableListOf()
 
     fun build(): List<UiGridChild> =

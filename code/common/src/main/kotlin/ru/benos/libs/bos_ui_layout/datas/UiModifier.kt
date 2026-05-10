@@ -135,7 +135,7 @@ open class UiModifier(
 
     fun resolveWidth(contentWidth: Int, availableWidth: Int): Int {
         val currentAvailable = UiRuntime.currentRuntime?.currentAvailableWidth
-        return stretchSize.height.resolve(
+        return stretchSize.width.resolve(
             minSize.width.result,
             padding.horizontal,
             currentAvailable,

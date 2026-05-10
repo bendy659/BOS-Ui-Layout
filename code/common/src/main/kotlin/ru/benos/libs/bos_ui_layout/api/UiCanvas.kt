@@ -1,7 +1,10 @@
 package ru.benos.libs.bos_ui_layout.api
 
+import net.minecraft.client.renderer.ShaderInstance
+import ru.benos.libs.bos_ui_layout.UiShaderCache
 import ru.benos.libs.bos_ui_layout.datas.IUiCanvas
 import ru.benos.libs.bos_ui_layout.datas.base.UiColor
+import ru.benos.libs.bos_ui_layout.datas.base.UiNodeContext
 import ru.benos.libs.bos_ui_layout.datas.base.UiRect
 
 object UiCanvas {
@@ -26,6 +29,6 @@ object UiCanvas {
     fun nineSliceTexture(color: UiColor, id: String): IUiCanvas.NineSliceTexture =
         IUiCanvas.NineSliceTexture(color, id)
 
-    fun shader(resource: String, args: Map<String, Any> = emptyMap()): IUiCanvas.Shader =
-        IUiCanvas.Shader(UiColor.WHITE, resource)
+    fun shader(resource: String, block: UiShaderCache.Builder.(UiNodeContext) -> Unit): IUiCanvas.Shader =
+        IUiCanvas.Shader(UiColor.WHITE, resource, block)
 }

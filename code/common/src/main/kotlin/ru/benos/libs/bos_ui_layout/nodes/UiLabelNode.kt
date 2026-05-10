@@ -27,6 +27,7 @@ class UiLabelNode(
         val contentHeight = lines.size * runtime.font.lineHeight
 
         return modifier.resolveSize(contentWidth, contentHeight, availableSize)
+            .applyTransformLayout()
     }
 
     override fun render(runtime: UiRuntime, bounds: UiRect) {
@@ -35,18 +36,20 @@ class UiLabelNode(
         val inner = bounds.shrink(modifier.padding)
         val lines = measureLines(runtime, inner.width)
 
-        lines.forEachIndexed { index, line ->
-            val lineWidth = runtime.font.width(line)
-            val drawX = textAlign.calcOffsetX(inner, lineWidth)
-            val drawY = inner.y + (index * runtime.font.lineHeight)
+        transformative(runtime, inner) {
+            lines.forEachIndexed { index, line ->
+                val lineWidth = runtime.font.width(line)
+                val drawX = textAlign.calcOffsetX(inner, lineWidth)
+                val drawY = inner.y + (index * runtime.font.lineHeight)
 
-            runtime.guiGraphics.drawString(
-                runtime.font,
-                line,
-                drawX, drawY,
-                0xFFFFFFFF.toInt(),
-                enableLabelShadow
-            )
+                runtime.guiGraphics.drawString(
+                    runtime.font,
+                    line,
+                    drawX, drawY,
+                    0xFFFFFFFF.toInt(),
+                    enableLabelShadow
+                )
+            }
         }
     }
 

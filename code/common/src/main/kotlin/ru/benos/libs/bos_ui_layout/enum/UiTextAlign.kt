@@ -8,7 +8,7 @@ enum class UiTextAlign {
     fun calcOffsetX(inner: UiRect, lineWidth: Int): Int =
         when (this) {
             Left -> inner.x
-            Center -> ((inner.width - lineWidth) / 2).coerceAtLeast(0)
+            Center -> inner.x + ((inner.width - lineWidth) / 2).coerceAtLeast(0)
             Right -> inner.right - lineWidth
         }
 }

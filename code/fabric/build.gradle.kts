@@ -55,7 +55,8 @@ dependencies {
     // Fabric Kotlin Language
     modImplementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinLanguageVersion")
 
-    "common"(project(":common"))
+    //"common"(project(":common"))
+    "common"(project(":common", "namedElements"))
     "shadowBundle"(project(mapOf("path" to ":common", "configuration" to "transformProductionFabric")))
 }
 

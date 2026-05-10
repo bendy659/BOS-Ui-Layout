@@ -19,7 +19,7 @@ import ru.benos.libs.bos_ui_layout.datas.UiModifier
 import ru.benos.libs.bos_ui_layout.datas.base.UiRect
 
 @UiDsl
-class UiBuilder {
+open class UiBuilder {
     private val children: MutableList<IUiNode> = mutableListOf()
 
     fun build(): List<IUiNode> =
@@ -48,7 +48,7 @@ class UiBuilder {
 
     fun label(
         component: Component,
-        textAlign: UiTextAlign,
+        textAlign: UiTextAlign = UiTextAlign.Left,
         wrap: Boolean = false,
         maxLines: Int = Int.MAX_VALUE,
         enableLabelShadow: Boolean = true,

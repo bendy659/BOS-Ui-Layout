@@ -11,6 +11,9 @@ data class UiRect(
             this(rect.x, rect.y, size.width, size.height)
 
     companion object {
+        val ZERO: UiRect
+            get() = UiRect(0, 0, 0, 0)
+
         val X16: UiRect
             get() = UiRect(0, 0, 16, 16)
 

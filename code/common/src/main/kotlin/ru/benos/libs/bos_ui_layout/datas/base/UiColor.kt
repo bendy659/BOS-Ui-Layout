@@ -16,9 +16,14 @@ data class UiColor(var r: Int, var g: Int, var b: Int, var a: Int) {
     companion object {
         val WHITE: UiColor = UiColor(255, 255, 255, 255)
         val BLACK: UiColor = UiColor(0, 0, 0, 255)
-        val RED: UiColor = UiColor(255, 0, 0, 255)
-        val GREEN: UiColor = UiColor(0, 255, 0, 255)
-        val BLUE: UiColor = UiColor(0, 0, 255, 255)
+
+        val RED   : UiColor = UiColor(255, 0, 0, 255)
+        val ORANGE: UiColor = UiColor(255, 165, 0, 255)
+        val YELLOW: UiColor = UiColor(255, 255, 0, 255)
+        val GREEN : UiColor = UiColor(0, 255, 0, 255)
+        val CYAN  : UiColor = UiColor(0, 255, 255, 255)
+        val BLUE  : UiColor = UiColor(0, 0, 255, 255)
+        val PURPLE: UiColor = UiColor(128, 0, 128, 255)
 
         fun fromHex(hex: Long): UiColor {
             val a = ((hex shr 24) and 0xFF).toInt()

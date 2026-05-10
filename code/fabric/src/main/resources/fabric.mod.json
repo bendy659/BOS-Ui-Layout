@@ -16,7 +16,7 @@
             { "adapter": "kotlin", "value": "ru.benos.bos_ui_layout.client.BosUiLayoutClient" }
         ]
     },
-    "mixins"    : [ "bos_ui_layout.mixins.json" ],
+    "mixins"    : [ ],
 
     "depends": {
         "fabricloader"          : ">=0.19.2",

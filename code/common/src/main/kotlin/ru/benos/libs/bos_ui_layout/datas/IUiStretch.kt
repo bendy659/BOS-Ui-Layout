@@ -18,8 +18,8 @@ sealed interface IUiStretch {
         val b =
             when (this) {
                 is Fixed -> this.value
-                is Fill -> available
-                is Available -> currentAvailable ?: available
+                is Fill -> (available * weight).toInt()
+                is Available -> ((currentAvailable ?: available) * weight).toInt()
                 is Expand -> {
                     val c = content + padding
                     val d = currentAvailable ?: available
@@ -35,9 +35,9 @@ sealed interface IUiStretch {
 
     fun calcLength(inner: Int, current: Int?, measure: Int) =
         when (this) {
-            is Fill -> inner
-            is Available -> current ?: inner
-            is Expand -> measure
+            is Fill -> (inner * weight).toInt()
+            is Available -> ((current ?: inner) * weight).toInt()
+            is Expand -> (measure * weight).toInt()
             else -> measure.coerceAtMost(inner)
         }
 }
