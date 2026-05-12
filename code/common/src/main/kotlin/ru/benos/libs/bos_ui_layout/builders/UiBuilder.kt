@@ -3,11 +3,12 @@ package ru.benos.libs.bos_ui_layout.builders
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.benos.libs.bos_ui_layout.UiDsl
-import ru.benos.libs.bos_ui_layout.api.UiCanvas
+import ru.benos.libs.bos_ui_layout.datas.IUiImageStretch
 import ru.benos.libs.bos_ui_layout.enum.UiAxis
 import ru.benos.libs.bos_ui_layout.enum.UiTextAlign
 import ru.benos.libs.bos_ui_layout.nodes.IUiNode
 import ru.benos.libs.bos_ui_layout.nodes.UiBoxNode
+import ru.benos.libs.bos_ui_layout.nodes.UiImageNode
 import ru.benos.libs.bos_ui_layout.nodes.UiLabelNode
 import ru.benos.libs.bos_ui_layout.nodes.UiRenderNode
 import ru.benos.libs.bos_ui_layout.nodes.grid.UiGridNode
@@ -72,15 +73,15 @@ open class UiBuilder {
     }
 
     fun image(
-        color: UiColor,
         resource: String,
-        modifier: UiModifier = UiModifier,
-        block: UiBuilder.() -> Unit = { }
+        multiplyColor: UiColor = UiColor.WHITE,
+        uv: UiRect? = null,
+        stretch: IUiImageStretch = IUiImageStretch.Stretch,
+        modifier: UiModifier = UiModifier
     ) {
-        val layer = setOf(UiCanvas.texture(color, resource))
-        val boxTheme = UiBoxTheme(layer)
+        val node = UiImageNode(resource, multiplyColor, uv, stretch, modifier)
 
-        box(boxTheme, false, modifier, block)
+        this.children += node
     }
 
     fun row(

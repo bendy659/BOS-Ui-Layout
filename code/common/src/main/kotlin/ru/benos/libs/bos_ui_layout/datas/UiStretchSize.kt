@@ -9,6 +9,6 @@ data class UiStretchSize(
 
     companion object {
         val WRAP: UiStretchSize
-            get() = UiStretchSize(IUiStretch.Wrap)
+            get() = UiStretchSize(IUiStretch.Fit)
     }
 }

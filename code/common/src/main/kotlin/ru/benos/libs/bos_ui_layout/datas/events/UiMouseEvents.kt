@@ -9,7 +9,7 @@ data class UiMouseEvents(
     val onReleased: ((Int, Int, Int) -> Boolean)?,
 
     val onDragged: ((Int, Double, Double) -> Boolean)?,
-    val onScrolled: ((Double) -> Boolean)?,
+    val onScrolled: ((Boolean, Double, Double) -> Boolean)?,
 ) {
     class Builder {
         var onEntered: (() -> Unit)? = null
@@ -23,11 +23,7 @@ data class UiMouseEvents(
         var onScrolled: ((Boolean, Double, Double) -> Boolean)? = null
 
         fun build(): UiMouseEvents =
-            UiMouseEvents(
-                null, null, null,
-                null, null,
-                null, null
-            )
+            UiMouseEvents(onEntered, onHovered, onExisted, onClicked, onReleased, onDragged, onScrolled)
 
         fun onEntered(block: () -> Unit) {
             this.onEntered = block
@@ -63,7 +59,7 @@ data class UiMouseEvents(
             get() = UiMouseEvents(
                 { /* Nothing */ }, { _, _ -> /* Nothing */ }, { /* Nothing */ },
                 { _, _, _ -> false }, { _, _, _ -> false },
-                { _, _, _ -> false }, { _ -> false }
+                { _, _, _ -> false }, { _, _, _ -> false }
             )
     }
 }

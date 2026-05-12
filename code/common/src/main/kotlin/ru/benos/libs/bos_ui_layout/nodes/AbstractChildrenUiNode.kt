@@ -49,8 +49,13 @@ abstract class AbstractChildrenUiNode : AbstractUiNode() {
                 child.modifier.stretchSize.height.calcLength(bounds.height, runtime.currentAvailableHeight, measured.height)
             )
             val (hAlignOffset, vAlignOffset) = child.modifier.aligns.calcAligns(bounds.size, childSize)
+            val overridePosition = child.modifier.overridePosition
 
-            val childBounds = UiRect(bounds.x + hAlignOffset, bounds.y + vAlignOffset, childSize)
+            val childBounds = UiRect(
+                overridePosition?.let { bounds.x + it.x } ?: bounds.x + hAlignOffset,
+                overridePosition?.let { bounds.y + it.y } ?: bounds.y + vAlignOffset,
+                childSize
+            )
             child.render(runtime, childBounds)
         }
     }

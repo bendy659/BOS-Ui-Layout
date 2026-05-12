@@ -22,13 +22,13 @@ object DemoUiHud0: AbstractBosUiHudLayout() {
         key(1.0f, UiColor.GREEN)
     }
 
-    val exampleShader = UiBoxTheme(
-        UiCanvas.shader("bos_ui_layout:hologram") { nodeCtx ->
-            getUniform("Time").value(nodeCtx.runtime.totalTime)
-            getUniform("Size").vec2(nodeCtx.bounds.width.toFloat(), nodeCtx.bounds.height.toFloat())
-            getUniform("Offset").vec2(nodeCtx.bounds.x.toFloat(), nodeCtx.bounds.y.toFloat())
-        }
-    )
+    //val exampleShader = UiBoxTheme(
+    //    UiCanvas.shader("bos_ui_layout:hologram") { nodeCtx ->
+    //        getUniform("Time").value(nodeCtx.runtime.totalTime)
+    //        getUniform("Size").vec2(nodeCtx.bounds.width.toFloat(), nodeCtx.bounds.height.toFloat())
+    //        getUniform("Offset").vec2(nodeCtx.bounds.x.toFloat(), nodeCtx.bounds.y.toFloat())
+    //    }
+    //)
 
     override fun UiBuilder.ui() {
         val player: Player = Minecraft.getInstance().player ?: return
@@ -48,16 +48,16 @@ object DemoUiHud0: AbstractBosUiHudLayout() {
                     scale(1.5f, 1.5f)
                 }
         ) {
-            box(
-                boxTheme = exampleShader,
-                modifier = UiModifier
-                    .align(UiAlign.Start, UiAlign.Center)
-                    .width(UiStretch.expand(percent))
-                    .height(UiStretch.expand())
-                    .transform {
-                        offset(4.0f, 4.0f, 0.1f)
-                    }
-            )
+            //box(
+            //    boxTheme = exampleShader,
+            //    modifier = UiModifier
+            //        .align(UiAlign.Start, UiAlign.Center)
+            //        .width(UiStretch.expand(percent))
+            //        .height(UiStretch.expand())
+            //        .transform {
+            //            offset(4.0f, 4.0f, 0.1f)
+            //        }
+            //)
 
             label(
                 component = Component.literal("Health: $percentStr%)"),

@@ -35,7 +35,8 @@ class UiRuntime(
     private val mouseReleasedRects: MutableSet<UiRect> = mutableSetOf()
     private val mouseReleasedRectsNext: MutableSet<UiRect> = mutableSetOf()
 
-    private var activeDragRect: UiRect? = null
+    private var activeDragRegion: UiEventRegions3<Int, Double, Double, Boolean>? = null
+    private var activeDragMouse: Pair<Double, Double>? = null
 
     var deltaTime: Float = 0.0f
     var totalTime: Float = 0.0f
@@ -47,6 +48,8 @@ class UiRuntime(
 
         mouseClickRegions.clear()
         mouseReleaseRegions.clear()
+        mouseScrollRegions.clear()
+        mouseDragRegions.clear()
 
         mouseHoveredRects.clear()
         mouseHoveredRects += mouseHoveredRectsNext
@@ -90,7 +93,7 @@ class UiRuntime(
     ): Boolean {
         for (region in regions.reversed()) {
             val (localX, localY) = region.transform.normalizeMouse(Vector2i(mouseX, mouseY), region.rect)
-            if (!region.rect.contains(localX.toDouble(), localY.toDouble()))
+            if (!region.rect.containsLocal(localX, localY))
                 continue
 
             if (region.event(key, localX.toInt(), localY.toInt())) {
@@ -104,24 +107,22 @@ class UiRuntime(
     fun mouseClicked(key: Int, mouseX: Number, mouseY: Number): Boolean {
         val click = click(key, mouseX.toInt(), mouseY.toInt(), mouseClickRegions, mouseClickedRects)
 
-        mouseDragRegions.reversed()
-            .forEach { region ->
+        activeDragRegion = mouseDragRegions.reversed()
+            .firstOrNull { region ->
                 val (localX, localY) = region.transform.normalizeMouse(
                     Vector2i(mouseX.toInt(), mouseY.toInt()),
                     region.rect
                 )
-
-                if (region.rect.contains(localX, localY)) {
-                    activeDragRect = region.rect
-                    return@forEach
-                }
+                region.rect.containsLocal(localX, localY)
             }
+        activeDragMouse = activeDragRegion?.let { mouseX.toDouble() to mouseY.toDouble() }
 
-        return click
+        return click || activeDragRegion != null
     }
 
     fun mouseReleased(key: Int, mouseX: Number, mouseY: Number): Boolean {
-        activeDragRect = null
+        activeDragRegion = null
+        activeDragMouse = null
 
         return click(key, mouseX.toInt(), mouseY.toInt(), mouseReleaseRegions, mouseReleasedRectsNext)
     }
@@ -132,7 +133,7 @@ class UiRuntime(
                 Vector2i(mouseX.toInt(), mouseY.toInt()),
                 region.rect
             )
-            if (!region.rect.contains(localX.toDouble(), localY.toDouble()))
+            if (!region.rect.containsLocal(localX, localY))
                 continue
 
             if (region.event(true, scrollX, scrollY)) {
@@ -142,11 +143,18 @@ class UiRuntime(
         return false
     }
 
-    fun mouseDragged(button: Int, dragX: Double, dragY: Double): Boolean {
-        val active = activeDragRect ?: return false
+    fun mouseDragged(button: Int, mouseX: Number, mouseY: Number, dragX: Double, dragY: Double): Boolean {
+        val active = activeDragRegion ?: return false
+        val currentMouse = mouseX.toDouble() to mouseY.toDouble()
+        val lastMouse = activeDragMouse ?: currentMouse
 
-        val region = mouseDragRegions.lastOrNull { it.rect == active } ?: return false
-        return region.event(button, dragX, dragY)
+        activeDragMouse = currentMouse
+
+        return active.event(
+            button,
+            currentMouse.first - lastMouse.first,
+            currentMouse.second - lastMouse.second
+        )
     }
 
     fun isMouseClicked(rect: UiRect): Boolean =
@@ -166,12 +174,16 @@ class UiRuntime(
         mouseDragRegions.any { it.rect == rect }
 
     fun trackHover(rect: UiRect, localX: Int, localY: Int): Boolean {
-        val hovered = rect.contains(localX, localY)
+        val hovered = rect.containsLocal(localX.toFloat(), localY.toFloat())
         if (hovered)
             mouseClickRegions.firstOrNull { it.rect == rect }
                 ?.let { mouseHoveredRectsNext += it.rect }
         return hovered
     }
+
+    private fun UiRect.containsLocal(x: Float, y: Float): Boolean =
+        x >= 0.0f && x <= width.toFloat() &&
+                y >= 0.0f && y <= height.toFloat()
 
     //// Utils ////
 

@@ -94,8 +94,8 @@ data class UiTransform(
         val local = Vector4f(mouse.x.toFloat(), mouse.y.toFloat(), 0.0f, 1.0f)
             .mul(matrix)
 
-        val normalizedX = (local.x - bounds.x) / bounds.width
-        val normalizedY = (local.y - bounds.y) / bounds.height
+        val normalizedX = local.x - bounds.x
+        val normalizedY = local.y - bounds.y
 
         return normalizedX to normalizedY
     }

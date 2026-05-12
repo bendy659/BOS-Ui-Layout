@@ -12,7 +12,7 @@ sealed interface IUiStretch {
     data class Available(override val weight: Float = 1f) : Weighted
     data class Expand(override val weight: Float = 1f) : Weighted
 
-    data object Wrap : IUiStretch
+    data object Fit : IUiStretch
 
     fun resolve(min: Int, padding: Int, currentAvailable: Int?, content: Int, available: Int): Int {
         val b =
@@ -27,7 +27,7 @@ sealed interface IUiStretch {
                     max(c, d)
                 }
 
-                Wrap -> content + padding
+                Fit -> content + padding
             }
 
         return max(min, b)

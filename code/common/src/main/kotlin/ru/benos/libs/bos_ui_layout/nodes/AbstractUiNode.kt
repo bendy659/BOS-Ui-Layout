@@ -38,6 +38,12 @@ abstract class AbstractUiNode : IUiNode {
             if (isHovered)
                 modifier.mouseEvents.onHovered?.invoke(localX.toInt(), localY.toInt())
         }
+
+        modifier.mouseEvents.onReleased?.let { runtime.addMouseReleaseRegion(bounds, modifier.transform, it) }
+
+        modifier.mouseEvents.onDragged?.let { runtime.addDragRegion(bounds, modifier.transform, it) }
+
+        modifier.mouseEvents.onScrolled?.let { runtime.addScrollRegion(bounds, modifier.transform, it) }
     }
 
     protected open fun scissor(runtime: UiRuntime, bounds: UiRect, block: () -> Unit) {

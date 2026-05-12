@@ -43,7 +43,7 @@ abstract class AbstractBosUiLayoutScreen : Screen(Component.empty()), IBosUiLayo
     }
 
     override fun mouseDragged(p0: Double, p1: Double, p2: Int, p3: Double, p4: Double): Boolean {
-        val mouseDragged = runtime?.mouseDragged(p2, p3, p4)
+        val mouseDragged = runtime?.mouseDragged(p2, p0, p1, p3, p4)
         if (mouseDragged == true)
             return true
 
